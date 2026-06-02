@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import passport from "passport";
+import { requireAuth } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
+import { deleteUser } from "../controllers/userController.js";
 
 const router = express.Router();
 
@@ -39,7 +42,24 @@ router.get(
   }
 );
 
-router.get("/me", (req, res) => {
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", {
+    scope: ["email"]
+  })
+);
+
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", {
+    failureRedirect: "http://localhost:5500/index.html",
+  }),
+  (req, res) => {
+    res.redirect("http://localhost:5500");
+  }
+);
+
+router.get("/me", requireAuth, (req, res) => {
 
   if (!req.user) {
     return res.status(401).json({
@@ -51,6 +71,13 @@ router.get("/me", (req, res) => {
 
   res.json(req.user);
 });
+
+router.delete(
+  "/users/:id",
+  requireAuth,
+  requireRole("admin"),
+  deleteUser
+);
 
 router.get("/logout", (req, res, next) => {
 
@@ -66,11 +93,12 @@ router.get("/logout", (req, res, next) => {
         return next(err);
       }
 
-      res.clearCookie("connect.sid");
+      res.clearCookie("sessionId");
+
+      return res.redirect("http://localhost:5500");
     });
 
   });
-
 });
 
 export default router;
