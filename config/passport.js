@@ -75,6 +75,12 @@ passport.use(
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       callbackURL: "/auth/facebook/callback",
+      profileFields: [
+      "id",
+      "displayName",
+      "photos",
+      "email"
+    ],
     },
     async (accessToken, refreshToken, profile, done) => {
         let user = await findUserByProvider("facebook", profile.id);
@@ -85,7 +91,7 @@ passport.use(
             providerId: profile.id,
             email: profile.emails?.[0]?.value || null,
             username: profile.emails?.[0]?.value || null,
-            displayName: profile.displayName,
+            displayName: profile.displayName || null,
             avatar: profile.photos?.[0]?.value || null,
             role: "user",
           });

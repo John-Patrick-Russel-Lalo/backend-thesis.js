@@ -6,8 +6,12 @@ import { deleteUser } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.patch("/:id", requireAuth, requireRole("admin"), updateUser);
+router.patch("/:id", requireAuth, updateUser, (req, res, next) => {
+    requireRole("admin", req.user.id)(req, res, next);
+});
 
-router.delete("/:id", requireAuth, requireRole("admin"), deleteUser);
+router.delete("/:id", requireAuth, deleteUser, (req, res, next) => {
+    requireRole("admin", req.user.id)(req, res, next);
+});
 
 export default router;

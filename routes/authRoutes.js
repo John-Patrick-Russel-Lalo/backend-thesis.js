@@ -69,6 +69,7 @@ router.get(
       {
         id: req.user.id,
         email: req.user.email,
+        username: req.user.username,
         role: req.user.role
       },
       process.env.JWT_SECRET,
@@ -110,6 +111,7 @@ router.get(
       {
         id: req.user.id,
         email: req.user.email,
+        username: req.user.display_name,
         role: req.user.role
       },
       process.env.JWT_SECRET,
@@ -117,6 +119,12 @@ router.get(
         expiresIn: "1h"
       }
     );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none"
+    });
 
     if (!token) {
       return res.status(500).json({
@@ -134,9 +142,9 @@ router.post("/register", register);
 
 router.post("/login", login);
 
-router.post("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
 
-  res.redirect("http://localhost:5500");
+  
   res.clearCookie("token", {
     httpOnly: true,
     secure: true,
