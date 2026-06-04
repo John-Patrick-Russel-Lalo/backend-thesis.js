@@ -4,7 +4,7 @@ export function requireRole(role) {
     if (req.user.role !== role) {
       return res.status(403).json({
         success: false,
-        message: "Forbidden"
+        message: `Forbidden: Requires ${role} role`,
       });
     }
 

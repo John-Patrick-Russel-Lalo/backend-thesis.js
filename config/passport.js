@@ -6,7 +6,7 @@ import { Strategy as FacebookStrategy } from "passport-facebook";
 
 import {
   findUserByProvider,
-  createUser,
+  createUserByProvider,
   findUserById,
 } from "../models/userModel.js";
 
@@ -22,7 +22,7 @@ passport.use(
         let user = await findUserByProvider("github", profile.id);
 
         if (!user) {
-          user = await createUser({
+          user = await createUserByProvider({
             provider: "github",
             providerId: profile.id,
             username: profile.username,
@@ -52,14 +52,14 @@ passport.use(
       let user = await findUserByProvider("google", profile.id);
 
       if (!user) {
-        user = await createUser({
+        user = await createUserByProvider({
           provider: "google",
           providerId: profile.id,
           email: profile.emails?.[0]?.value || null,
           username: profile.emails?.[0]?.value || null,
-          role: "user",
           displayName: profile.displayName,
           avatar: profile.photos?.[0]?.value || null,
+          role: "user",
         });
       }
 
@@ -80,7 +80,7 @@ passport.use(
         let user = await findUserByProvider("facebook", profile.id);
 
         if (!user) {
-          user = await createUser({
+          user = await createUserByProvider({
             provider: "facebook",
             providerId: profile.id,
             email: profile.emails?.[0]?.value || null,

@@ -3,9 +3,11 @@ import express from "express";
 import session from "express-session";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import cors from "cors";
 
 const app = express();
+app.use(express.json());
 
 app.use(
   session({
@@ -15,6 +17,7 @@ app.use(
     saveUninitialized: false
   })
 );
+
 
 app.use(
   cors({
@@ -29,5 +32,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 export default app;

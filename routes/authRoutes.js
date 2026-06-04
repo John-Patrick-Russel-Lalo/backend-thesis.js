@@ -3,7 +3,9 @@ import express from "express";
 import passport from "passport";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { requireRole } from "../middleware/roleMiddleware.js";
-import { deleteUser } from "../controllers/userController.js";
+import { register } from "../controllers/authController.js";
+import { login } from "../controllers/authController.js";
+
 
 const router = express.Router();
 
@@ -59,25 +61,10 @@ router.get(
   }
 );
 
-router.get("/me", requireAuth, (req, res) => {
 
-  if (!req.user) {
-    return res.status(401).json({
-      authenticated: false
-    });
-  }
+router.post("/register", register);
 
-  console.log(req.user);
-
-  res.json(req.user);
-});
-
-router.delete(
-  "/users/:id",
-  requireAuth,
-  requireRole("admin"),
-  deleteUser
-);
+router.post("/login", login);
 
 router.get("/logout", (req, res, next) => {
 
@@ -99,6 +86,20 @@ router.get("/logout", (req, res, next) => {
     });
 
   });
+});
+
+
+router.get("/me", requireAuth, (req, res) => {
+
+  if (!req.user) {
+    return res.status(401).json({
+      authenticated: false
+    });
+  }
+
+  console.log(req.user);
+
+  res.json(req.user);
 });
 
 export default router;
