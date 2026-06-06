@@ -48,10 +48,6 @@ export async function login(req, res) {
 
     console.log("Generated token:", token);
 
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
     res.status(200).json({ user, token });
   } catch (error) {
     console.error(error);
